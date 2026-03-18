@@ -37,11 +37,14 @@ describe('deployments API wrapper', () => {
     it('calls DeploymentApi.deploymentQuery with correct params', async () => {
       mockExecute.mockResolvedValueOnce({ count: 1, resources: [{ id: 'd1' }] });
 
-      const result = await listDeployments('default', { status: 'RUNNING', top: 10 });
+      const result = await listDeployments(
+        { status: 'RUNNING' as any, $top: 10 },
+        { 'AI-Resource-Group': 'default' },
+      );
 
       expect(result.success).toBe(true);
       expect(DeploymentApi.deploymentQuery).toHaveBeenCalledWith(
-        { status: 'RUNNING', $top: 10, $skip: undefined },
+        { status: 'RUNNING', $top: 10 },
         { 'AI-Resource-Group': 'default' },
       );
     });
@@ -49,7 +52,10 @@ describe('deployments API wrapper', () => {
     it('returns error response on SDK failure', async () => {
       mockExecute.mockRejectedValueOnce(new Error('Connection failed'));
 
-      const result = await listDeployments('default');
+      const result = await listDeployments(
+        {},
+        { 'AI-Resource-Group': 'default' },
+      );
 
       expect(result.success).toBe(false);
       if (!result.success) {
@@ -62,7 +68,11 @@ describe('deployments API wrapper', () => {
     it('passes deployment ID and resource group correctly', async () => {
       mockExecute.mockResolvedValueOnce({ id: 'd1', status: 'RUNNING' });
 
-      const result = await getDeployment('d1', 'my-group');
+      const result = await getDeployment(
+        'd1',
+        {},
+        { 'AI-Resource-Group': 'my-group' },
+      );
 
       expect(result.success).toBe(true);
       expect(DeploymentApi.deploymentGet).toHaveBeenCalledWith(
@@ -77,7 +87,10 @@ describe('deployments API wrapper', () => {
     it('passes configurationId in request body', async () => {
       mockExecute.mockResolvedValueOnce({ id: 'd-new', status: 'PENDING' });
 
-      const result = await createDeployment('config-123', 'default');
+      const result = await createDeployment(
+        { configurationId: 'config-123' },
+        { 'AI-Resource-Group': 'default' },
+      );
 
       expect(result.success).toBe(true);
       expect(DeploymentApi.deploymentCreate).toHaveBeenCalledWith(
@@ -94,7 +107,11 @@ describe('deployments API wrapper', () => {
     it('passes targetStatus in request body', async () => {
       mockExecute.mockResolvedValueOnce({ message: 'OK' });
 
-      const result = await updateDeployment('d1', 'STOPPED', 'default');
+      const result = await updateDeployment(
+        'd1',
+        { targetStatus: 'STOPPED' } as any,
+        { 'AI-Resource-Group': 'default' },
+      );
 
       expect(result.success).toBe(true);
       expect(DeploymentApi.deploymentModify).toHaveBeenCalledWith(
@@ -109,7 +126,10 @@ describe('deployments API wrapper', () => {
     it('passes deployment ID and resource group', async () => {
       mockExecute.mockResolvedValueOnce({ message: 'Deleted' });
 
-      const result = await deleteDeployment('d1', 'default');
+      const result = await deleteDeployment(
+        'd1',
+        { 'AI-Resource-Group': 'default' },
+      );
 
       expect(result.success).toBe(true);
       expect(DeploymentApi.deploymentDelete).toHaveBeenCalledWith(
@@ -123,7 +143,10 @@ describe('deployments API wrapper', () => {
         response: { status: 409, data: { message: 'Deployment must be stopped first' } },
       });
 
-      const result = await deleteDeployment('d1', 'default');
+      const result = await deleteDeployment(
+        'd1',
+        { 'AI-Resource-Group': 'default' },
+      );
 
       expect(result.success).toBe(false);
       if (!result.success) {

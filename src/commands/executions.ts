@@ -53,13 +53,10 @@ class ListExecutionsCommand implements CommandPlugin {
   }
 
   async run(args: ArgumentsCamelCase<any>): Promise<void> {
-    const resourceGroup = args.resourceGroup as string;
-    const result = await listExecutions(resourceGroup, {
-      status: args.status as string | undefined,
-      scenarioId: args.scenarioId as string | undefined,
-      top: args.top as number | undefined,
-      skip: args.skip as number | undefined,
-    });
+    const result = await listExecutions(
+      { status: args.status as any, scenarioId: args.scenarioId as string, $top: args.top as number, $skip: args.skip as number },
+      { 'AI-Resource-Group': args.resourceGroup as string },
+    );
 
     if (!result.success) {
       logger.error(result.error);
@@ -101,8 +98,11 @@ class GetExecutionCommand implements CommandPlugin {
 
   async run(args: ArgumentsCamelCase<any>): Promise<void> {
     const id = args.id as string;
-    const resourceGroup = args.resourceGroup as string;
-    const result = await getExecution(id, resourceGroup);
+    const result = await getExecution(
+      id,
+      {},
+      { 'AI-Resource-Group': args.resourceGroup as string },
+    );
 
     if (!result.success) {
       logger.error(result.error);
@@ -142,14 +142,16 @@ class CreateExecutionCommand implements CommandPlugin {
 
   async run(args: ArgumentsCamelCase<any>): Promise<void> {
     const configId = args.configId as string;
-    const resourceGroup = args.resourceGroup as string;
 
     if (args.dryRun) {
       logger.info(`[Dry Run] Would create execution with configuration: ${configId}`);
       return;
     }
 
-    const result = await createExecution(configId, resourceGroup);
+    const result = await createExecution(
+      { configurationId: configId },
+      { 'AI-Resource-Group': args.resourceGroup as string },
+    );
 
     if (!result.success) {
       logger.error(result.error);
@@ -197,14 +199,17 @@ class UpdateExecutionCommand implements CommandPlugin {
   async run(args: ArgumentsCamelCase<any>): Promise<void> {
     const id = args.id as string;
     const targetStatus = args.targetStatus as string;
-    const resourceGroup = args.resourceGroup as string;
 
     if (args.dryRun) {
       logger.info(`[Dry Run] Would update execution ${id} to target status: ${targetStatus}`);
       return;
     }
 
-    const result = await updateExecution(id, targetStatus, resourceGroup);
+    const result = await updateExecution(
+      id,
+      { targetStatus } as any,
+      { 'AI-Resource-Group': args.resourceGroup as string },
+    );
 
     if (!result.success) {
       logger.error(result.error);
@@ -250,7 +255,6 @@ class DeleteExecutionCommand implements CommandPlugin {
 
   async run(args: ArgumentsCamelCase<any>): Promise<void> {
     const id = args.id as string;
-    const resourceGroup = args.resourceGroup as string;
 
     if (args.dryRun) {
       logger.info(`[Dry Run] Would delete execution ${id}`);
@@ -264,7 +268,10 @@ class DeleteExecutionCommand implements CommandPlugin {
       return;
     }
 
-    const result = await deleteExecution(id, resourceGroup);
+    const result = await deleteExecution(
+      id,
+      { 'AI-Resource-Group': args.resourceGroup as string },
+    );
 
     if (!result.success) {
       logger.error(result.error);

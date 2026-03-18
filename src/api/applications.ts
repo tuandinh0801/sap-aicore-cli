@@ -3,15 +3,10 @@ import type { Response } from '../types/common.js';
 import { formatApiError } from '../utils/api-error.js';
 
 export async function listApplications(
-  options?: { top?: number; skip?: number },
+  ...args: Parameters<typeof ApplicationApi.kubesubmitV4ApplicationsGetAll>
 ): Promise<Response<any>> {
   try {
-    const result = await ApplicationApi.kubesubmitV4ApplicationsGetAll(
-      {
-        $top: options?.top,
-        $skip: options?.skip,
-      },
-    ).execute();
+    const result = await ApplicationApi.kubesubmitV4ApplicationsGetAll(...args).execute();
     return { success: true, data: result };
   } catch (error) {
     return { success: false, error: formatApiError(error) };
@@ -19,12 +14,10 @@ export async function listApplications(
 }
 
 export async function getApplication(
-  name: string,
+  ...args: Parameters<typeof ApplicationApi.kubesubmitV4ApplicationsGet>
 ): Promise<Response<any>> {
   try {
-    const result = await ApplicationApi.kubesubmitV4ApplicationsGet(
-      name,
-    ).execute();
+    const result = await ApplicationApi.kubesubmitV4ApplicationsGet(...args).execute();
     return { success: true, data: result };
   } catch (error) {
     return { success: false, error: formatApiError(error) };
@@ -32,12 +25,10 @@ export async function getApplication(
 }
 
 export async function createApplication(
-  body: { repositoryUrl: string; revision: string; path: string; applicationName: string },
+  ...args: Parameters<typeof ApplicationApi.kubesubmitV4ApplicationsCreate>
 ): Promise<Response<any>> {
   try {
-    const result = await ApplicationApi.kubesubmitV4ApplicationsCreate(
-      body,
-    ).execute();
+    const result = await ApplicationApi.kubesubmitV4ApplicationsCreate(...args).execute();
     return { success: true, data: result };
   } catch (error) {
     return { success: false, error: formatApiError(error) };
@@ -45,14 +36,10 @@ export async function createApplication(
 }
 
 export async function updateApplication(
-  name: string,
-  body: { repositoryUrl?: string; revision?: string; path?: string },
+  ...args: Parameters<typeof ApplicationApi.kubesubmitV4ApplicationsUpdate>
 ): Promise<Response<any>> {
   try {
-    const result = await ApplicationApi.kubesubmitV4ApplicationsUpdate(
-      name,
-      body as any,
-    ).execute();
+    const result = await ApplicationApi.kubesubmitV4ApplicationsUpdate(...args).execute();
     return { success: true, data: result };
   } catch (error) {
     return { success: false, error: formatApiError(error) };
@@ -60,12 +47,10 @@ export async function updateApplication(
 }
 
 export async function deleteApplication(
-  name: string,
+  ...args: Parameters<typeof ApplicationApi.kubesubmitV4ApplicationsDelete>
 ): Promise<Response<any>> {
   try {
-    const result = await ApplicationApi.kubesubmitV4ApplicationsDelete(
-      name,
-    ).execute();
+    const result = await ApplicationApi.kubesubmitV4ApplicationsDelete(...args).execute();
     return { success: true, data: result };
   } catch (error) {
     return { success: false, error: formatApiError(error) };

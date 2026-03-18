@@ -3,14 +3,10 @@ import type { Response } from '../types/common.js';
 import { formatApiError } from '../utils/api-error.js';
 
 export async function getScenario(
-  scenarioId: string,
-  resourceGroup: string,
+  ...args: Parameters<typeof ScenarioApi.scenarioGet>
 ): Promise<Response<any>> {
   try {
-    const result = await ScenarioApi.scenarioGet(
-      scenarioId,
-      { 'AI-Resource-Group': resourceGroup },
-    ).execute();
+    const result = await ScenarioApi.scenarioGet(...args).execute();
     return { success: true, data: result };
   } catch (error) {
     return { success: false, error: formatApiError(error) };
@@ -18,15 +14,10 @@ export async function getScenario(
 }
 
 export async function listScenarioVersions(
-  scenarioId: string,
-  resourceGroup: string,
+  ...args: Parameters<typeof ScenarioApi.scenarioQueryVersions>
 ): Promise<Response<any>> {
   try {
-    const result = await ScenarioApi.scenarioQueryVersions(
-      scenarioId,
-      {},
-      { 'AI-Resource-Group': resourceGroup },
-    ).execute();
+    const result = await ScenarioApi.scenarioQueryVersions(...args).execute();
     return { success: true, data: result };
   } catch (error) {
     return { success: false, error: formatApiError(error) };
@@ -34,14 +25,10 @@ export async function listScenarioVersions(
 }
 
 export async function listModels(
-  scenarioId: string,
-  resourceGroup: string,
+  ...args: Parameters<typeof ScenarioApi.scenarioQueryModels>
 ): Promise<Response<any>> {
   try {
-    const result = await ScenarioApi.scenarioQueryModels(
-      scenarioId,
-      { 'AI-Resource-Group': resourceGroup },
-    ).execute();
+    const result = await ScenarioApi.scenarioQueryModels(...args).execute();
     return { success: true, data: result };
   } catch (error) {
     return { success: false, error: formatApiError(error) };

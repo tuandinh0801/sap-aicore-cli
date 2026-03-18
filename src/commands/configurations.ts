@@ -47,12 +47,10 @@ class ListConfigurationsCommand implements CommandPlugin {
   }
 
   async run(args: ArgumentsCamelCase<any>): Promise<void> {
-    const resourceGroup = args.resourceGroup as string;
-    const result = await listConfigurations(resourceGroup, {
-      scenarioId: args.scenarioId as string | undefined,
-      top: args.top as number | undefined,
-      skip: args.skip as number | undefined,
-    });
+    const result = await listConfigurations(
+      { scenarioId: args.scenarioId as string, $top: args.top as number, $skip: args.skip as number },
+      { 'AI-Resource-Group': args.resourceGroup as string },
+    );
 
     if (!result.success) {
       logger.error(result.error);
@@ -94,8 +92,11 @@ class GetConfigurationCommand implements CommandPlugin {
 
   async run(args: ArgumentsCamelCase<any>): Promise<void> {
     const id = args.id as string;
-    const resourceGroup = args.resourceGroup as string;
-    const result = await getConfiguration(id, resourceGroup);
+    const result = await getConfiguration(
+      id,
+      {},
+      { 'AI-Resource-Group': args.resourceGroup as string },
+    );
 
     if (!result.success) {
       logger.error(result.error);
@@ -155,7 +156,6 @@ class CreateConfigurationCommand implements CommandPlugin {
     const name = args.name as string;
     const executableId = args.executableId as string;
     const scenarioId = args.scenarioId as string;
-    const resourceGroup = args.resourceGroup as string;
 
     let parameterBindings: Array<{ key: string; value: string }> | undefined;
     let inputArtifactBindings: Array<{ key: string; artifactId: string }> | undefined;
@@ -183,10 +183,14 @@ class CreateConfigurationCommand implements CommandPlugin {
       return;
     }
 
-    const result = await createConfiguration(name, executableId, scenarioId, resourceGroup, {
-      parameterBindings,
-      inputArtifactBindings,
-    });
+    const body: any = { name, executableId, scenarioId };
+    if (parameterBindings) body.parameterBindings = parameterBindings;
+    if (inputArtifactBindings) body.inputArtifactBindings = inputArtifactBindings;
+
+    const result = await createConfiguration(
+      body,
+      { 'AI-Resource-Group': args.resourceGroup as string },
+    );
 
     if (!result.success) {
       logger.error(result.error);

@@ -52,13 +52,10 @@ class ListArtifactsCommand implements CommandPlugin {
   }
 
   async run(args: ArgumentsCamelCase<any>): Promise<void> {
-    const resourceGroup = args.resourceGroup as string;
-    const result = await listArtifacts(resourceGroup, {
-      scenarioId: args.scenarioId as string | undefined,
-      kind: args.kind as string | undefined,
-      top: args.top as number | undefined,
-      skip: args.skip as number | undefined,
-    });
+    const result = await listArtifacts(
+      { scenarioId: args.scenarioId as string, kind: args.kind as any, $top: args.top as number, $skip: args.skip as number },
+      { 'AI-Resource-Group': args.resourceGroup as string },
+    );
 
     if (!result.success) {
       logger.error(result.error);
@@ -100,8 +97,11 @@ class GetArtifactCommand implements CommandPlugin {
 
   async run(args: ArgumentsCamelCase<any>): Promise<void> {
     const id = args.id as string;
-    const resourceGroup = args.resourceGroup as string;
-    const result = await getArtifact(id, resourceGroup);
+    const result = await getArtifact(
+      id,
+      {},
+      { 'AI-Resource-Group': args.resourceGroup as string },
+    );
 
     if (!result.success) {
       logger.error(result.error);
@@ -168,7 +168,6 @@ class CreateArtifactCommand implements CommandPlugin {
     const kind = args.kind as string;
     const url = args.url as string;
     const scenarioId = args.scenarioId as string;
-    const resourceGroup = args.resourceGroup as string;
 
     let labels: Array<{ key: string; value: string }> | undefined;
     if (args.labels) {
@@ -185,10 +184,14 @@ class CreateArtifactCommand implements CommandPlugin {
       return;
     }
 
-    const result = await createArtifact(name, kind, url, scenarioId, resourceGroup, {
-      description: args.description as string | undefined,
-      labels,
-    });
+    const body: any = { name, kind, url, scenarioId };
+    if (args.description) body.description = args.description;
+    if (labels) body.labels = labels;
+
+    const result = await createArtifact(
+      body,
+      { 'AI-Resource-Group': args.resourceGroup as string },
+    );
 
     if (!result.success) {
       logger.error(result.error);

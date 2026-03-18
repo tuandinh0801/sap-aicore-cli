@@ -3,19 +3,10 @@ import type { Response } from '../types/common.js';
 import { formatApiError } from '../utils/api-error.js';
 
 export async function listExecutions(
-  resourceGroup: string,
-  options?: { status?: string; scenarioId?: string; top?: number; skip?: number },
+  ...args: Parameters<typeof ExecutionApi.executionQuery>
 ): Promise<Response<any>> {
   try {
-    const result = await ExecutionApi.executionQuery(
-      {
-        status: options?.status as any,
-        scenarioId: options?.scenarioId,
-        $top: options?.top,
-        $skip: options?.skip,
-      },
-      { 'AI-Resource-Group': resourceGroup },
-    ).execute();
+    const result = await ExecutionApi.executionQuery(...args).execute();
     return { success: true, data: result };
   } catch (error) {
     return { success: false, error: formatApiError(error) };
@@ -23,15 +14,10 @@ export async function listExecutions(
 }
 
 export async function getExecution(
-  executionId: string,
-  resourceGroup: string,
+  ...args: Parameters<typeof ExecutionApi.executionGet>
 ): Promise<Response<any>> {
   try {
-    const result = await ExecutionApi.executionGet(
-      executionId,
-      {},
-      { 'AI-Resource-Group': resourceGroup },
-    ).execute();
+    const result = await ExecutionApi.executionGet(...args).execute();
     return { success: true, data: result };
   } catch (error) {
     return { success: false, error: formatApiError(error) };
@@ -39,14 +25,10 @@ export async function getExecution(
 }
 
 export async function createExecution(
-  configurationId: string,
-  resourceGroup: string,
+  ...args: Parameters<typeof ExecutionApi.executionCreate>
 ): Promise<Response<any>> {
   try {
-    const result = await ExecutionApi.executionCreate(
-      { configurationId },
-      { 'AI-Resource-Group': resourceGroup },
-    ).execute();
+    const result = await ExecutionApi.executionCreate(...args).execute();
     return { success: true, data: result };
   } catch (error) {
     return { success: false, error: formatApiError(error) };
@@ -54,16 +36,10 @@ export async function createExecution(
 }
 
 export async function updateExecution(
-  executionId: string,
-  targetStatus: string,
-  resourceGroup: string,
+  ...args: Parameters<typeof ExecutionApi.executionModify>
 ): Promise<Response<any>> {
   try {
-    const result = await ExecutionApi.executionModify(
-      executionId,
-      { targetStatus } as any,
-      { 'AI-Resource-Group': resourceGroup },
-    ).execute();
+    const result = await ExecutionApi.executionModify(...args).execute();
     return { success: true, data: result };
   } catch (error) {
     return { success: false, error: formatApiError(error) };
@@ -71,14 +47,10 @@ export async function updateExecution(
 }
 
 export async function deleteExecution(
-  executionId: string,
-  resourceGroup: string,
+  ...args: Parameters<typeof ExecutionApi.executionDelete>
 ): Promise<Response<any>> {
   try {
-    const result = await ExecutionApi.executionDelete(
-      executionId,
-      { 'AI-Resource-Group': resourceGroup },
-    ).execute();
+    const result = await ExecutionApi.executionDelete(...args).execute();
     return { success: true, data: result };
   } catch (error) {
     return { success: false, error: formatApiError(error) };

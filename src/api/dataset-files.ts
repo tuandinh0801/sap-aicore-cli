@@ -3,17 +3,10 @@ import type { Response } from '../types/common.js';
 import { formatApiError } from '../utils/api-error.js';
 
 export async function uploadDatasetFile(
-  remotePath: string,
-  fileBody: any,
-  resourceGroup: string,
+  ...args: Parameters<typeof FileApi.fileUpload>
 ): Promise<Response<any>> {
   try {
-    const result = await FileApi.fileUpload(
-      remotePath,
-      fileBody,
-      {},
-      { 'AI-Resource-Group': resourceGroup },
-    ).execute();
+    const result = await FileApi.fileUpload(...args).execute();
     return { success: true, data: result };
   } catch (error) {
     return { success: false, error: formatApiError(error) };
@@ -21,14 +14,10 @@ export async function uploadDatasetFile(
 }
 
 export async function getDatasetFile(
-  remotePath: string,
-  resourceGroup: string,
+  ...args: Parameters<typeof FileApi.fileDownload>
 ): Promise<Response<any>> {
   try {
-    const result = await FileApi.fileDownload(
-      remotePath,
-      { 'AI-Resource-Group': resourceGroup },
-    ).execute();
+    const result = await FileApi.fileDownload(...args).execute();
     return { success: true, data: result };
   } catch (error) {
     return { success: false, error: formatApiError(error) };
@@ -36,14 +25,10 @@ export async function getDatasetFile(
 }
 
 export async function deleteDatasetFile(
-  remotePath: string,
-  resourceGroup: string,
+  ...args: Parameters<typeof FileApi.fileDelete>
 ): Promise<Response<any>> {
   try {
-    const result = await FileApi.fileDelete(
-      remotePath,
-      { 'AI-Resource-Group': resourceGroup },
-    ).execute();
+    const result = await FileApi.fileDelete(...args).execute();
     return { success: true, data: result };
   } catch (error) {
     return { success: false, error: formatApiError(error) };

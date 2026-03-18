@@ -28,10 +28,14 @@ class ListMetricsCommand implements CommandPlugin {
   }
 
   async run(args: ArgumentsCamelCase<any>): Promise<void> {
-    const resourceGroup = args.resourceGroup as string;
-    const result = await listMetrics(resourceGroup, {
-      executionId: args.executionId as string | undefined,
-    });
+    const queryParams: any = {};
+    if (args.executionId) {
+      queryParams.executionIds = [args.executionId as string];
+    }
+    const result = await listMetrics(
+      queryParams,
+      { 'AI-Resource-Group': args.resourceGroup as string },
+    );
 
     if (!result.success) {
       logger.error(result.error);
@@ -79,7 +83,6 @@ class DeleteMetricsCommand implements CommandPlugin {
 
   async run(args: ArgumentsCamelCase<any>): Promise<void> {
     const executionId = args.executionId as string;
-    const resourceGroup = args.resourceGroup as string;
 
     if (args.dryRun) {
       logger.info(`[Dry Run] Would delete metrics for execution ${executionId}`);
@@ -93,7 +96,10 @@ class DeleteMetricsCommand implements CommandPlugin {
       return;
     }
 
-    const result = await deleteMetrics(executionId, resourceGroup);
+    const result = await deleteMetrics(
+      { executionId },
+      { 'AI-Resource-Group': args.resourceGroup as string },
+    );
 
     if (!result.success) {
       logger.error(result.error);

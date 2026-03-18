@@ -3,17 +3,10 @@ import type { Response } from '../types/common.js';
 import { formatApiError } from '../utils/api-error.js';
 
 export async function listExecutionSchedules(
-  resourceGroup: string,
-  options?: { top?: number; skip?: number },
+  ...args: Parameters<typeof ExecutionScheduleApi.executionScheduleQuery>
 ): Promise<Response<any>> {
   try {
-    const result = await ExecutionScheduleApi.executionScheduleQuery(
-      {
-        $top: options?.top,
-        $skip: options?.skip,
-      },
-      { 'AI-Resource-Group': resourceGroup },
-    ).execute();
+    const result = await ExecutionScheduleApi.executionScheduleQuery(...args).execute();
     return { success: true, data: result };
   } catch (error) {
     return { success: false, error: formatApiError(error) };
@@ -21,14 +14,10 @@ export async function listExecutionSchedules(
 }
 
 export async function getExecutionSchedule(
-  executionScheduleId: string,
-  resourceGroup: string,
+  ...args: Parameters<typeof ExecutionScheduleApi.executionScheduleGet>
 ): Promise<Response<any>> {
   try {
-    const result = await ExecutionScheduleApi.executionScheduleGet(
-      executionScheduleId,
-      { 'AI-Resource-Group': resourceGroup },
-    ).execute();
+    const result = await ExecutionScheduleApi.executionScheduleGet(...args).execute();
     return { success: true, data: result };
   } catch (error) {
     return { success: false, error: formatApiError(error) };
@@ -36,24 +25,10 @@ export async function getExecutionSchedule(
 }
 
 export async function createExecutionSchedule(
-  configurationId: string,
-  cron: string,
-  name: string,
-  resourceGroup: string,
-  options?: { start?: string; end?: string },
+  ...args: Parameters<typeof ExecutionScheduleApi.executionScheduleCreate>
 ): Promise<Response<any>> {
   try {
-    const body: any = { configurationId, cron, name };
-    if (options?.start) {
-      body.start = options.start;
-    }
-    if (options?.end) {
-      body.end = options.end;
-    }
-    const result = await ExecutionScheduleApi.executionScheduleCreate(
-      body,
-      { 'AI-Resource-Group': resourceGroup },
-    ).execute();
+    const result = await ExecutionScheduleApi.executionScheduleCreate(...args).execute();
     return { success: true, data: result };
   } catch (error) {
     return { success: false, error: formatApiError(error) };
@@ -61,23 +36,10 @@ export async function createExecutionSchedule(
 }
 
 export async function updateExecutionSchedule(
-  executionScheduleId: string,
-  resourceGroup: string,
-  options?: { cron?: string; status?: string },
+  ...args: Parameters<typeof ExecutionScheduleApi.executionScheduleModify>
 ): Promise<Response<any>> {
   try {
-    const body: any = {};
-    if (options?.cron) {
-      body.cron = options.cron;
-    }
-    if (options?.status) {
-      body.status = options.status;
-    }
-    const result = await ExecutionScheduleApi.executionScheduleModify(
-      executionScheduleId,
-      body,
-      { 'AI-Resource-Group': resourceGroup },
-    ).execute();
+    const result = await ExecutionScheduleApi.executionScheduleModify(...args).execute();
     return { success: true, data: result };
   } catch (error) {
     return { success: false, error: formatApiError(error) };
@@ -85,14 +47,10 @@ export async function updateExecutionSchedule(
 }
 
 export async function deleteExecutionSchedule(
-  executionScheduleId: string,
-  resourceGroup: string,
+  ...args: Parameters<typeof ExecutionScheduleApi.executionScheduleDelete>
 ): Promise<Response<any>> {
   try {
-    const result = await ExecutionScheduleApi.executionScheduleDelete(
-      executionScheduleId,
-      { 'AI-Resource-Group': resourceGroup },
-    ).execute();
+    const result = await ExecutionScheduleApi.executionScheduleDelete(...args).execute();
     return { success: true, data: result };
   } catch (error) {
     return { success: false, error: formatApiError(error) };

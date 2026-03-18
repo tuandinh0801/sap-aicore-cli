@@ -20,6 +20,14 @@ class ListDockerSecretsCommand implements CommandPlugin {
 
   builder(yargs: Argv): Argv {
     return yargs
+      .option('top', {
+        describe: 'Max results to return',
+        type: 'number',
+      })
+      .option('skip', {
+        describe: 'Results to skip (pagination)',
+        type: 'number',
+      })
       .option('json', {
         describe: 'Output as JSON',
         type: 'boolean',
@@ -28,7 +36,9 @@ class ListDockerSecretsCommand implements CommandPlugin {
   }
 
   async run(args: ArgumentsCamelCase<any>): Promise<void> {
-    const result = await listDockerRegistrySecrets();
+    const result = await listDockerRegistrySecrets(
+      { $top: args.top as number, $skip: args.skip as number },
+    );
 
     if (!result.success) {
       logger.error(result.error);
@@ -44,6 +54,16 @@ class ListDockerSecretsCommand implements CommandPlugin {
 
     formatTable(secrets, dockerSecretColumns);
   }
+}
+
+function buildDockerConfigJson(server: string, username: string, password: string): string {
+  const auth = Buffer.from(`${username}:${password}`).toString('base64');
+  const config = {
+    auths: {
+      [server]: { username, password, auth },
+    },
+  };
+  return JSON.stringify(config);
 }
 
 class CreateDockerSecretCommand implements CommandPlugin {
@@ -84,11 +104,16 @@ class CreateDockerSecretCommand implements CommandPlugin {
       return;
     }
 
-    const result = await createDockerRegistrySecret(
-      args.name as string,
+    const dockerConfigJson = buildDockerConfigJson(
       args.server as string,
       args.username as string,
       args.password as string,
+    );
+    const result = await createDockerRegistrySecret(
+      {
+        name: args.name as string,
+        data: { '.dockerconfigjson': dockerConfigJson },
+      } as any,
     );
 
     if (!result.success) {
@@ -146,7 +171,13 @@ class UpdateDockerSecretCommand implements CommandPlugin {
       return;
     }
 
-    const result = await updateDockerRegistrySecret(name, server, username, password);
+    const dockerConfigJson = buildDockerConfigJson(server, username, password);
+    const result = await updateDockerRegistrySecret(
+      name,
+      {
+        data: { '.dockerconfigjson': dockerConfigJson },
+      },
+    );
 
     if (!result.success) {
       logger.error(result.error);

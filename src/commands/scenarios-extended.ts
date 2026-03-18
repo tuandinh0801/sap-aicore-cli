@@ -55,8 +55,10 @@ class GetScenarioCommand implements CommandPlugin {
 
   async run(args: ArgumentsCamelCase<any>): Promise<void> {
     const id = args.id as string;
-    const resourceGroup = args.resourceGroup as string;
-    const result = await getScenario(id, resourceGroup);
+    const result = await getScenario(
+      id,
+      { 'AI-Resource-Group': args.resourceGroup as string },
+    );
 
     if (!result.success) {
       logger.error(result.error);
@@ -96,8 +98,11 @@ class ListScenarioVersionsCommand implements CommandPlugin {
 
   async run(args: ArgumentsCamelCase<any>): Promise<void> {
     const scenarioId = args.scenarioId as string;
-    const resourceGroup = args.resourceGroup as string;
-    const result = await listScenarioVersions(scenarioId, resourceGroup);
+    const result = await listScenarioVersions(
+      scenarioId,
+      {},
+      { 'AI-Resource-Group': args.resourceGroup as string },
+    );
 
     if (!result.success) {
       logger.error(result.error);
@@ -139,8 +144,11 @@ class ListExecutablesCommand implements CommandPlugin {
 
   async run(args: ArgumentsCamelCase<any>): Promise<void> {
     const scenarioId = args.scenarioId as string;
-    const resourceGroup = args.resourceGroup as string;
-    const result = await listExecutables(scenarioId, resourceGroup);
+    const result = await listExecutables(
+      scenarioId,
+      {},
+      { 'AI-Resource-Group': args.resourceGroup as string },
+    );
 
     if (!result.success) {
       logger.error(result.error);
@@ -188,8 +196,11 @@ class GetExecutableCommand implements CommandPlugin {
   async run(args: ArgumentsCamelCase<any>): Promise<void> {
     const id = args.id as string;
     const scenarioId = args.scenarioId as string;
-    const resourceGroup = args.resourceGroup as string;
-    const result = await getExecutable(scenarioId, id, resourceGroup);
+    const result = await getExecutable(
+      scenarioId,
+      id,
+      { 'AI-Resource-Group': args.resourceGroup as string },
+    );
 
     if (!result.success) {
       logger.error(result.error);
@@ -229,8 +240,10 @@ class ListModelsCommand implements CommandPlugin {
 
   async run(args: ArgumentsCamelCase<any>): Promise<void> {
     const scenarioId = args.scenarioId as string;
-    const resourceGroup = args.resourceGroup as string;
-    const result = await listModels(scenarioId, resourceGroup);
+    const result = await listModels(
+      scenarioId,
+      { 'AI-Resource-Group': args.resourceGroup as string },
+    );
 
     if (!result.success) {
       logger.error(result.error);

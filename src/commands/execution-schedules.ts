@@ -45,11 +45,10 @@ class ListExecutionSchedulesCommand implements CommandPlugin {
   }
 
   async run(args: ArgumentsCamelCase<any>): Promise<void> {
-    const resourceGroup = args.resourceGroup as string;
-    const result = await listExecutionSchedules(resourceGroup, {
-      top: args.top as number | undefined,
-      skip: args.skip as number | undefined,
-    });
+    const result = await listExecutionSchedules(
+      { $top: args.top as number, $skip: args.skip as number },
+      { 'AI-Resource-Group': args.resourceGroup as string },
+    );
 
     if (!result.success) {
       logger.error(result.error);
@@ -91,8 +90,10 @@ class GetExecutionScheduleCommand implements CommandPlugin {
 
   async run(args: ArgumentsCamelCase<any>): Promise<void> {
     const id = args.id as string;
-    const resourceGroup = args.resourceGroup as string;
-    const result = await getExecutionSchedule(id, resourceGroup);
+    const result = await getExecutionSchedule(
+      id,
+      { 'AI-Resource-Group': args.resourceGroup as string },
+    );
 
     if (!result.success) {
       logger.error(result.error);
@@ -152,17 +153,20 @@ class CreateExecutionScheduleCommand implements CommandPlugin {
     const configId = args.configId as string;
     const cron = args.cron as string;
     const name = args.name as string;
-    const resourceGroup = args.resourceGroup as string;
 
     if (args.dryRun) {
       logger.info(`[Dry Run] Would create execution schedule "${name}" with cron: ${cron}`);
       return;
     }
 
-    const result = await createExecutionSchedule(configId, cron, name, resourceGroup, {
-      start: args.start as string | undefined,
-      end: args.end as string | undefined,
-    });
+    const body: any = { configurationId: configId, cron, name };
+    if (args.start) body.start = args.start;
+    if (args.end) body.end = args.end;
+
+    const result = await createExecutionSchedule(
+      body,
+      { 'AI-Resource-Group': args.resourceGroup as string },
+    );
 
     if (!result.success) {
       logger.error(result.error);
@@ -212,17 +216,21 @@ class UpdateExecutionScheduleCommand implements CommandPlugin {
 
   async run(args: ArgumentsCamelCase<any>): Promise<void> {
     const id = args.id as string;
-    const resourceGroup = args.resourceGroup as string;
 
     if (args.dryRun) {
       logger.info(`[Dry Run] Would update execution schedule ${id}`);
       return;
     }
 
-    const result = await updateExecutionSchedule(id, resourceGroup, {
-      cron: args.cron as string | undefined,
-      status: args.status as string | undefined,
-    });
+    const body: any = {};
+    if (args.cron) body.cron = args.cron;
+    if (args.status) body.status = args.status;
+
+    const result = await updateExecutionSchedule(
+      id,
+      body,
+      { 'AI-Resource-Group': args.resourceGroup as string },
+    );
 
     if (!result.success) {
       logger.error(result.error);
@@ -267,7 +275,6 @@ class DeleteExecutionScheduleCommand implements CommandPlugin {
 
   async run(args: ArgumentsCamelCase<any>): Promise<void> {
     const id = args.id as string;
-    const resourceGroup = args.resourceGroup as string;
 
     if (args.dryRun) {
       logger.info(`[Dry Run] Would delete execution schedule ${id}`);
@@ -281,7 +288,10 @@ class DeleteExecutionScheduleCommand implements CommandPlugin {
       return;
     }
 
-    const result = await deleteExecutionSchedule(id, resourceGroup);
+    const result = await deleteExecutionSchedule(
+      id,
+      { 'AI-Resource-Group': args.resourceGroup as string },
+    );
 
     if (!result.success) {
       logger.error(result.error);

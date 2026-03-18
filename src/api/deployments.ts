@@ -3,18 +3,10 @@ import type { Response } from '../types/common.js';
 import { formatApiError } from '../utils/api-error.js';
 
 export async function listDeployments(
-  resourceGroup: string,
-  options?: { status?: string; top?: number; skip?: number },
+  ...args: Parameters<typeof DeploymentApi.deploymentQuery>
 ): Promise<Response<any>> {
   try {
-    const result = await DeploymentApi.deploymentQuery(
-      {
-        status: options?.status as any,
-        $top: options?.top,
-        $skip: options?.skip,
-      },
-      { 'AI-Resource-Group': resourceGroup },
-    ).execute();
+    const result = await DeploymentApi.deploymentQuery(...args).execute();
     return { success: true, data: result };
   } catch (error) {
     return { success: false, error: formatApiError(error) };
@@ -22,15 +14,10 @@ export async function listDeployments(
 }
 
 export async function getDeployment(
-  deploymentId: string,
-  resourceGroup: string,
+  ...args: Parameters<typeof DeploymentApi.deploymentGet>
 ): Promise<Response<any>> {
   try {
-    const result = await DeploymentApi.deploymentGet(
-      deploymentId,
-      {},
-      { 'AI-Resource-Group': resourceGroup },
-    ).execute();
+    const result = await DeploymentApi.deploymentGet(...args).execute();
     return { success: true, data: result };
   } catch (error) {
     return { success: false, error: formatApiError(error) };
@@ -38,14 +25,10 @@ export async function getDeployment(
 }
 
 export async function createDeployment(
-  configurationId: string,
-  resourceGroup: string,
+  ...args: Parameters<typeof DeploymentApi.deploymentCreate>
 ): Promise<Response<any>> {
   try {
-    const result = await DeploymentApi.deploymentCreate(
-      { configurationId },
-      { 'AI-Resource-Group': resourceGroup },
-    ).execute();
+    const result = await DeploymentApi.deploymentCreate(...args).execute();
     return { success: true, data: result };
   } catch (error) {
     return { success: false, error: formatApiError(error) };
@@ -53,16 +36,10 @@ export async function createDeployment(
 }
 
 export async function updateDeployment(
-  deploymentId: string,
-  targetStatus: string,
-  resourceGroup: string,
+  ...args: Parameters<typeof DeploymentApi.deploymentModify>
 ): Promise<Response<any>> {
   try {
-    const result = await DeploymentApi.deploymentModify(
-      deploymentId,
-      { targetStatus } as any,
-      { 'AI-Resource-Group': resourceGroup },
-    ).execute();
+    const result = await DeploymentApi.deploymentModify(...args).execute();
     return { success: true, data: result };
   } catch (error) {
     return { success: false, error: formatApiError(error) };
@@ -70,14 +47,10 @@ export async function updateDeployment(
 }
 
 export async function deleteDeployment(
-  deploymentId: string,
-  resourceGroup: string,
+  ...args: Parameters<typeof DeploymentApi.deploymentDelete>
 ): Promise<Response<any>> {
   try {
-    const result = await DeploymentApi.deploymentDelete(
-      deploymentId,
-      { 'AI-Resource-Group': resourceGroup },
-    ).execute();
+    const result = await DeploymentApi.deploymentDelete(...args).execute();
     return { success: true, data: result };
   } catch (error) {
     return { success: false, error: formatApiError(error) };

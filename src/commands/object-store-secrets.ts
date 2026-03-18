@@ -25,6 +25,14 @@ class ListObjectStoreSecretsCommand implements CommandPlugin {
         describe: 'AI resource group',
         type: 'string',
       })
+      .option('top', {
+        describe: 'Max results to return',
+        type: 'number',
+      })
+      .option('skip', {
+        describe: 'Results to skip (pagination)',
+        type: 'number',
+      })
       .option('json', {
         describe: 'Output as JSON',
         type: 'boolean',
@@ -34,7 +42,11 @@ class ListObjectStoreSecretsCommand implements CommandPlugin {
 
   async run(args: ArgumentsCamelCase<any>): Promise<void> {
     const resourceGroup = args.resourceGroup as string | undefined;
-    const result = await listObjectStoreSecrets(resourceGroup);
+    const headers = resourceGroup ? { 'AI-Resource-Group': resourceGroup } : undefined;
+    const result = await listObjectStoreSecrets(
+      { $top: args.top as number, $skip: args.skip as number },
+      headers,
+    );
 
     if (!result.success) {
       logger.error(result.error);
@@ -104,7 +116,10 @@ class CreateObjectStoreSecretCommand implements CommandPlugin {
       return;
     }
 
-    const result = await createObjectStoreSecret(body, resourceGroup);
+    const result = await createObjectStoreSecret(
+      body,
+      resourceGroup ? { 'AI-Resource-Group': resourceGroup } : undefined,
+    );
 
     if (!result.success) {
       logger.error(result.error);
@@ -169,7 +184,11 @@ class UpdateObjectStoreSecretCommand implements CommandPlugin {
       return;
     }
 
-    const result = await updateObjectStoreSecret(name, body, resourceGroup);
+    const result = await updateObjectStoreSecret(
+      name,
+      body,
+      resourceGroup ? { 'AI-Resource-Group': resourceGroup } : undefined,
+    );
 
     if (!result.success) {
       logger.error(result.error);
@@ -228,7 +247,10 @@ class DeleteObjectStoreSecretCommand implements CommandPlugin {
     }
 
     const resourceGroup = args.resourceGroup as string | undefined;
-    const result = await deleteObjectStoreSecret(name, resourceGroup);
+    const result = await deleteObjectStoreSecret(
+      name,
+      resourceGroup ? { 'AI-Resource-Group': resourceGroup } : undefined,
+    );
 
     if (!result.success) {
       logger.error(result.error);

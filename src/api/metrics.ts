@@ -3,18 +3,10 @@ import type { Response } from '../types/common.js';
 import { formatApiError } from '../utils/api-error.js';
 
 export async function listMetrics(
-  resourceGroup: string,
-  options?: { executionId?: string },
+  ...args: Parameters<typeof MetricsApi.metricsFind>
 ): Promise<Response<any>> {
   try {
-    const queryParams: any = {};
-    if (options?.executionId) {
-      queryParams.executionIds = [options.executionId];
-    }
-    const result = await MetricsApi.metricsFind(
-      queryParams,
-      { 'AI-Resource-Group': resourceGroup },
-    ).execute();
+    const result = await MetricsApi.metricsFind(...args).execute();
     return { success: true, data: result };
   } catch (error) {
     return { success: false, error: formatApiError(error) };
@@ -22,14 +14,10 @@ export async function listMetrics(
 }
 
 export async function deleteMetrics(
-  executionId: string,
-  resourceGroup: string,
+  ...args: Parameters<typeof MetricsApi.metricsDelete>
 ): Promise<Response<any>> {
   try {
-    const result = await MetricsApi.metricsDelete(
-      { executionId },
-      { 'AI-Resource-Group': resourceGroup },
-    ).execute();
+    const result = await MetricsApi.metricsDelete(...args).execute();
     return { success: true, data: result };
   } catch (error) {
     return { success: false, error: formatApiError(error) };

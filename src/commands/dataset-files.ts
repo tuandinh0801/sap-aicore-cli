@@ -51,7 +51,12 @@ class UploadDatasetFileCommand implements CommandPlugin {
     }
 
     const fileBuffer = fs.readFileSync(filePath);
-    const result = await uploadDatasetFile(remotePath, fileBuffer, resourceGroup);
+    const result = await uploadDatasetFile(
+      remotePath,
+      fileBuffer,
+      {},
+      { 'AI-Resource-Group': resourceGroup },
+    );
 
     if (!result.success) {
       logger.error(result.error);
@@ -95,8 +100,10 @@ class GetDatasetFileCommand implements CommandPlugin {
 
   async run(args: ArgumentsCamelCase<any>): Promise<void> {
     const remotePath = args.remotePath as string;
-    const resourceGroup = args.resourceGroup as string;
-    const result = await getDatasetFile(remotePath, resourceGroup);
+    const result = await getDatasetFile(
+      remotePath,
+      { 'AI-Resource-Group': args.resourceGroup as string },
+    );
 
     if (!result.success) {
       logger.error(result.error);
@@ -148,7 +155,6 @@ class DeleteDatasetFileCommand implements CommandPlugin {
 
   async run(args: ArgumentsCamelCase<any>): Promise<void> {
     const remotePath = args.remotePath as string;
-    const resourceGroup = args.resourceGroup as string;
 
     if (args.dryRun) {
       logger.info(`[Dry Run] Would delete dataset file at ${remotePath}`);
@@ -162,7 +168,10 @@ class DeleteDatasetFileCommand implements CommandPlugin {
       return;
     }
 
-    const result = await deleteDatasetFile(remotePath, resourceGroup);
+    const result = await deleteDatasetFile(
+      remotePath,
+      { 'AI-Resource-Group': args.resourceGroup as string },
+    );
 
     if (!result.success) {
       logger.error(result.error);

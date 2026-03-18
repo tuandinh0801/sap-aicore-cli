@@ -24,6 +24,14 @@ class ListApplicationsCommand implements CommandPlugin {
 
   builder(yargs: Argv): Argv {
     return yargs
+      .option('top', {
+        describe: 'Max results to return',
+        type: 'number',
+      })
+      .option('skip', {
+        describe: 'Results to skip (pagination)',
+        type: 'number',
+      })
       .option('json', {
         describe: 'Output as JSON',
         type: 'boolean',
@@ -32,7 +40,9 @@ class ListApplicationsCommand implements CommandPlugin {
   }
 
   async run(args: ArgumentsCamelCase<any>): Promise<void> {
-    const result = await listApplications();
+    const result = await listApplications(
+      { $top: args.top as number, $skip: args.skip as number },
+    );
 
     if (!result.success) {
       logger.error(result.error);

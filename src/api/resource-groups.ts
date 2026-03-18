@@ -3,15 +3,10 @@ import type { Response } from '../types/common.js';
 import { formatApiError } from '../utils/api-error.js';
 
 export async function listResourceGroups(
-  options?: { top?: number; skip?: number },
+  ...args: Parameters<typeof ResourceGroupApi.kubesubmitV4ResourcegroupsGetAll>
 ): Promise<Response<any>> {
   try {
-    const result = await ResourceGroupApi.kubesubmitV4ResourcegroupsGetAll(
-      {
-        $top: options?.top,
-        $skip: options?.skip,
-      },
-    ).execute();
+    const result = await ResourceGroupApi.kubesubmitV4ResourcegroupsGetAll(...args).execute();
     return { success: true, data: result };
   } catch (error) {
     return { success: false, error: formatApiError(error) };
@@ -19,12 +14,10 @@ export async function listResourceGroups(
 }
 
 export async function getResourceGroup(
-  id: string,
+  ...args: Parameters<typeof ResourceGroupApi.kubesubmitV4ResourcegroupsGet>
 ): Promise<Response<any>> {
   try {
-    const result = await ResourceGroupApi.kubesubmitV4ResourcegroupsGet(
-      id,
-    ).execute();
+    const result = await ResourceGroupApi.kubesubmitV4ResourcegroupsGet(...args).execute();
     return { success: true, data: result };
   } catch (error) {
     return { success: false, error: formatApiError(error) };
@@ -32,12 +25,10 @@ export async function getResourceGroup(
 }
 
 export async function createResourceGroup(
-  body: { resourceGroupId?: string; labels?: any[] },
+  ...args: Parameters<typeof ResourceGroupApi.kubesubmitV4ResourcegroupsCreate>
 ): Promise<Response<any>> {
   try {
-    const result = await ResourceGroupApi.kubesubmitV4ResourcegroupsCreate(
-      body,
-    ).execute();
+    const result = await ResourceGroupApi.kubesubmitV4ResourcegroupsCreate(...args).execute();
     return { success: true, data: result };
   } catch (error) {
     return { success: false, error: formatApiError(error) };
@@ -45,14 +36,10 @@ export async function createResourceGroup(
 }
 
 export async function updateResourceGroup(
-  id: string,
-  body: { labels?: any[] },
+  ...args: Parameters<typeof ResourceGroupApi.kubesubmitV4ResourcegroupsPatch>
 ): Promise<Response<any>> {
   try {
-    const result = await ResourceGroupApi.kubesubmitV4ResourcegroupsPatch(
-      id,
-      body,
-    ).execute();
+    const result = await ResourceGroupApi.kubesubmitV4ResourcegroupsPatch(...args).execute();
     return { success: true, data: result };
   } catch (error) {
     return { success: false, error: formatApiError(error) };
@@ -60,12 +47,10 @@ export async function updateResourceGroup(
 }
 
 export async function deleteResourceGroup(
-  id: string,
+  ...args: Parameters<typeof ResourceGroupApi.kubesubmitV4ResourcegroupsDelete>
 ): Promise<Response<any>> {
   try {
-    const result = await ResourceGroupApi.kubesubmitV4ResourcegroupsDelete(
-      id,
-    ).execute();
+    const result = await ResourceGroupApi.kubesubmitV4ResourcegroupsDelete(...args).execute();
     return { success: true, data: result };
   } catch (error) {
     return { success: false, error: formatApiError(error) };

@@ -25,6 +25,14 @@ class ListSecretsCommand implements CommandPlugin {
         describe: 'AI resource group',
         type: 'string',
       })
+      .option('top', {
+        describe: 'Max results to return',
+        type: 'number',
+      })
+      .option('skip', {
+        describe: 'Results to skip (pagination)',
+        type: 'number',
+      })
       .option('json', {
         describe: 'Output as JSON',
         type: 'boolean',
@@ -34,7 +42,11 @@ class ListSecretsCommand implements CommandPlugin {
 
   async run(args: ArgumentsCamelCase<any>): Promise<void> {
     const resourceGroup = args.resourceGroup as string | undefined;
-    const result = await listGenericSecrets(resourceGroup);
+    const headers = resourceGroup ? { 'AI-Resource-Group': resourceGroup } : undefined;
+    const result = await listGenericSecrets(
+      { $top: args.top as number, $skip: args.skip as number },
+      headers,
+    );
 
     if (!result.success) {
       logger.error(result.error);
@@ -76,7 +88,8 @@ class GetSecretCommand implements CommandPlugin {
   async run(args: ArgumentsCamelCase<any>): Promise<void> {
     const name = args.name as string;
     const resourceGroup = args.resourceGroup as string | undefined;
-    const result = await getGenericSecret(name, resourceGroup);
+    const headers = resourceGroup ? { 'AI-Resource-Group': resourceGroup } : undefined;
+    const result = await getGenericSecret(name, headers);
 
     if (!result.success) {
       logger.error(result.error);
@@ -138,7 +151,10 @@ class CreateSecretCommand implements CommandPlugin {
       return;
     }
 
-    const result = await createGenericSecret(body, resourceGroup);
+    const result = await createGenericSecret(
+      body,
+      resourceGroup ? { 'AI-Resource-Group': resourceGroup } : undefined,
+    );
 
     if (!result.success) {
       logger.error(result.error);
@@ -198,7 +214,11 @@ class UpdateSecretCommand implements CommandPlugin {
       return;
     }
 
-    const result = await updateGenericSecret(name, { data }, resourceGroup);
+    const result = await updateGenericSecret(
+      name,
+      { data },
+      resourceGroup ? { 'AI-Resource-Group': resourceGroup } : undefined,
+    );
 
     if (!result.success) {
       logger.error(result.error);
@@ -256,7 +276,10 @@ class DeleteSecretCommand implements CommandPlugin {
     }
 
     const resourceGroup = args.resourceGroup as string | undefined;
-    const result = await deleteGenericSecret(name, resourceGroup);
+    const result = await deleteGenericSecret(
+      name,
+      resourceGroup ? { 'AI-Resource-Group': resourceGroup } : undefined,
+    );
 
     if (!result.success) {
       logger.error(result.error);

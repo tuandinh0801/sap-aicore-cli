@@ -105,7 +105,10 @@ describe('deployment commands', () => {
 
       await cmd.run({ configId: 'cfg-1', resourceGroup: 'default', dryRun: false, json: false, _: [], $0: '' } as any);
 
-      expect(mockCreateDeployment).toHaveBeenCalledWith('cfg-1', 'default');
+      expect(mockCreateDeployment).toHaveBeenCalledWith(
+        { configurationId: 'cfg-1' },
+        { 'AI-Resource-Group': 'default' },
+      );
       expect(logOutput.some(l => l.includes('d-new'))).toBe(true);
     });
   });
@@ -132,7 +135,10 @@ describe('deployment commands', () => {
 
       await cmd.run({ id: 'd1', resourceGroup: 'default', dryRun: false, force: true, json: false, _: [], $0: '' } as any);
 
-      expect(mockDeleteDeployment).toHaveBeenCalledWith('d1', 'default');
+      expect(mockDeleteDeployment).toHaveBeenCalledWith(
+        'd1',
+        { 'AI-Resource-Group': 'default' },
+      );
     });
 
     it('dry-run takes precedence over force', async () => {

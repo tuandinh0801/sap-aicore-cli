@@ -2,23 +2,11 @@ import { ObjectStoreSecretApi } from '@sap-ai-sdk/ai-api';
 import type { Response } from '../types/common.js';
 import { formatApiError } from '../utils/api-error.js';
 
-function buildHeaders(resourceGroup?: string): Record<string, string> | undefined {
-  if (!resourceGroup) return undefined;
-  return { 'AI-Resource-Group': resourceGroup };
-}
-
 export async function listObjectStoreSecrets(
-  resourceGroup?: string,
-  options?: { top?: number; skip?: number },
+  ...args: Parameters<typeof ObjectStoreSecretApi.kubesubmitV4ObjectStoreSecretsQuery>
 ): Promise<Response<any>> {
   try {
-    const result = await ObjectStoreSecretApi.kubesubmitV4ObjectStoreSecretsQuery(
-      {
-        $top: options?.top,
-        $skip: options?.skip,
-      },
-      buildHeaders(resourceGroup),
-    ).execute();
+    const result = await ObjectStoreSecretApi.kubesubmitV4ObjectStoreSecretsQuery(...args).execute();
     return { success: true, data: result };
   } catch (error) {
     return { success: false, error: formatApiError(error) };
@@ -26,14 +14,10 @@ export async function listObjectStoreSecrets(
 }
 
 export async function createObjectStoreSecret(
-  body: { name: string; type: string; data: Record<string, any> },
-  resourceGroup?: string,
+  ...args: Parameters<typeof ObjectStoreSecretApi.kubesubmitV4ObjectStoreSecretsCreate>
 ): Promise<Response<any>> {
   try {
-    const result = await ObjectStoreSecretApi.kubesubmitV4ObjectStoreSecretsCreate(
-      body,
-      buildHeaders(resourceGroup),
-    ).execute();
+    const result = await ObjectStoreSecretApi.kubesubmitV4ObjectStoreSecretsCreate(...args).execute();
     return { success: true, data: result };
   } catch (error) {
     return { success: false, error: formatApiError(error) };
@@ -41,16 +25,10 @@ export async function createObjectStoreSecret(
 }
 
 export async function updateObjectStoreSecret(
-  name: string,
-  body: { name: string; type: string; data: Record<string, any> },
-  resourceGroup?: string,
+  ...args: Parameters<typeof ObjectStoreSecretApi.kubesubmitV4ObjectStoreSecretsPatch>
 ): Promise<Response<any>> {
   try {
-    const result = await ObjectStoreSecretApi.kubesubmitV4ObjectStoreSecretsPatch(
-      name,
-      body,
-      buildHeaders(resourceGroup),
-    ).execute();
+    const result = await ObjectStoreSecretApi.kubesubmitV4ObjectStoreSecretsPatch(...args).execute();
     return { success: true, data: result };
   } catch (error) {
     return { success: false, error: formatApiError(error) };
@@ -58,14 +36,10 @@ export async function updateObjectStoreSecret(
 }
 
 export async function deleteObjectStoreSecret(
-  name: string,
-  resourceGroup?: string,
+  ...args: Parameters<typeof ObjectStoreSecretApi.kubesubmitV4ObjectStoreSecretsDelete>
 ): Promise<Response<any>> {
   try {
-    const result = await ObjectStoreSecretApi.kubesubmitV4ObjectStoreSecretsDelete(
-      name,
-      buildHeaders(resourceGroup),
-    ).execute();
+    const result = await ObjectStoreSecretApi.kubesubmitV4ObjectStoreSecretsDelete(...args).execute();
     return { success: true, data: result };
   } catch (error) {
     return { success: false, error: formatApiError(error) };
